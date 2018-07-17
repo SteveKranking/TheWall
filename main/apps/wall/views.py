@@ -10,11 +10,13 @@ def index(request):
 
 def dashboard(request, first_name):
     context = {
-        'first_name': first_name
+      "messages": Message.objects.all(),
+      "authors": Comment.objects.all()
     }
     # One for comments and one for messages
     # context = {"messages": Message.objects.all()}
-    # context = {"authors": Comments.objects.all()}
+    # context = {"authors": Comment.objects.all()}
+
     return render(request, "wall/dashboard.html", context)
 
 

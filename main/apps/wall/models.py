@@ -77,6 +77,21 @@ class UserManager(models.Manager):
             return (False, errors)
         return(True, called_user)
 
+class MessageManager():
+    def createMessage(self, form):
+            
+        # request.session id for poster?
+        new_message = self.create(content = data['content'], poster= data[''])
+        return(True, new_message)
+
+class CommentManager():
+    def createComment(self, form):
+            
+        # request.session id for poster?
+        new_comment = self.create(content = data['content'], poster= data[''])
+        return(True, new_comment)
+
+
 
 class User(models.Model):
     first_name = models.CharField(max_length=255)
@@ -92,11 +107,11 @@ class Message(models.Model):
     poster = models.ForeignKey(User, related_name="messages")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    manager = UserManager()
+    manager = MessageManager()
 
 class Comment(models.Model):
     content = models.CharField(max_length=255)
     poster = models.ForeignKey(User, related_name="comments")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    manager = UserManager()
+    manager = CommentManager()

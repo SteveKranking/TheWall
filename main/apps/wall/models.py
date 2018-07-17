@@ -3,10 +3,6 @@ from django.db import models
 import re
 import bcrypt
 
-# Create your models here.
-NUM_REGEX = re.compile(r'[^a-zA-Z]')
-EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
-
 
 def uni_to_str(myDict):
     data = {}
@@ -55,7 +51,7 @@ class UserManager(models.Manager):
         # if flag:
         #     return (False, collections.OrderedDict(errors))
 
-        new_user = self.create(first_name = data['first_name'],last_name = data['last_name'], email = data['email'], birthday= data['birthday'], password = bcrypt.hashpw(data['password'], bcrypt.gensalt()))
+        new_user = self.create(email = data['email'], birthday= data['birthday'], password = data['password'])
 
         return(True, collections.OrderedDict(errors), new_user)
     
@@ -79,6 +75,17 @@ class UserManager(models.Manager):
 
 class MessageManager():
     def createMessage(self, form):
+
+        flag = False
+        errors = []
+        data = uni_str_dict(form)
+
+        if len(data['content']) < 1:
+            flag = True
+            errors.append(('first_name_length', "Your first name must be at least three characters long"))
+
+        if flag:
+            return (False, errors)
             
         # request.session id for poster?
         new_message = self.create(content = data['content'], poster= data[''])
@@ -86,6 +93,17 @@ class MessageManager():
 
 class CommentManager():
     def createComment(self, form):
+
+        flag = False
+        errors = []
+        data = uni_str_dict(form)
+
+        if len(data['content']) < 1:
+            flag = True
+            errors.append(('first_name_length', "Your first name must be at least three characters long"))
+
+        if flag:
+            return (False, errors)
             
         # request.session id for poster?
         new_comment = self.create(content = data['content'], poster= data[''])
@@ -94,8 +112,6 @@ class CommentManager():
 
 
 class User(models.Model):
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
     email = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)

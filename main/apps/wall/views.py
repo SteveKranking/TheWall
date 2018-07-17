@@ -41,7 +41,7 @@ def register(req):
     if result[0]:
         for key, message in result[1].iteritems():
             messages.error(req, message)
-        return redirect('/')
+        return redirect('/dashboard')
     
     for key, message in result[1].iteritems():
         messages.error(req, message)

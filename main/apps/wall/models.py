@@ -17,29 +17,65 @@ def uni_to_str(myDict):
 
 
 class UserManager(models.Manager):
-    def makeUser(self, form):
+    def createUser(self, form):
         flag = False
-        errors = {}
-        data = uni_to_str(form)
+        errors = []
+        data = uni_str_dict(form)
+        # now= str(datetime.datetime.now())
+        # if User.manager.filter(email = data['email']):
+        #     flag = True
+        #     errors.append(("used_email", "Email already registered."))
+        #     return (False, collections.OrderedDict(errors))
+        # if len(data['first_name'])<2:
+        #     flag = True
+        #     errors.append(('first_name_length', "Your first name must be at least three characters long"))
+        # if len(data['last_name'])<2:
+        #     flag = True
+        #     errors.append(('last_name_length', "Your last name must be at least three characters long")) 
         
-        user = self.create(first_name=data['first_name'], last_name=data['last_name'], email=data['email'], password=bcrypt.hashpw(data['password'], bcrypt.gensalt()))
-        return (True, user)
+        # for char in range(len(data['first_name'])):
+        #     if NAME_REGEX.match(data['first_name'][char]):
+        #         errors.append(('first_name_number', "No non letters are allowed in first name"))
+        #         flag = True
+        #         break    
+        # for char in range(len(data['last_name'])):
+        #     if NAME_REGEX.match(data['last_name'][char]):
+        #         errors.append(('last_name_number', "No non letters are allowed in last name"))
+        #         flag = True
+        #         break    
+        # if not EMAIL_REGEX.match(data['email']):
+        #     errors.append(('email', "Email Invalid."))
+        #     flag = True
+        # if not data['password']== data['confirm_password']:
+        #     errors.append(('password', "Passwords do not match"))
+        #     flag= True       
+        # # if now > birthday:
+        # #     errors.append(('date', "Birthday must be valid"))
+        # #     flag= True
+        # if flag:
+        #     return (False, collections.OrderedDict(errors))
 
-    def userLogin(self, form):
+        new_user = self.create(first_name = data['first_name'],last_name = data['last_name'], email = data['email'], birthday= data['birthday'], password = bcrypt.hashpw(data['password'], bcrypt.gensalt()))
+
+        return(True, collections.OrderedDict(errors), new_user)
+    
+    def login(self, form):
         flag = False
-        errors = {}
-        data = uni_to_str(form)
+        errors = []
+        data = uni_str_dict(form)
         try:
-            current_user = User.manager.get(email=data['email'])
+            called_user = User.manager.get(email=data['email'])
         except Exception:
-            errors['email'] = "That email does not exist in our records."
+            flag=True  
+            errors.append(("Taken_User", "Username is incorrect/already taken"))
             return (False, errors)
-        if not bcrypt.checkpw(data['password'].encode(), current_user.password.encode()):
-            flag = True
-            errors['password'] = "That password doesn't match the one we've got..."
+        if not bcrypt.checkpw(data['password'].encode(), called_user.password.encode()):
+            flag= True
+            errors.append(("password", "Password Incorrect"))
+
         if flag:
             return (False, errors)
-        return (True, current_user)
+        return(True, called_user)
 
 
 class User(models.Model):
@@ -47,6 +83,20 @@ class User(models.Model):
     last_name = models.CharField(max_length=255)
     email = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    manager = UserManager()
+
+class Message(models.Model):
+    content = models.CharField(max_length=255)
+    poster = models.ForeignKey(User, related_name="messages")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    manager = UserManager()
+
+class Comment(models.Model):
+    content = models.CharField(max_length=255)
+    poster = models.ForeignKey(User, related_name="comments")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     manager = UserManager()

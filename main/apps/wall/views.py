@@ -8,28 +8,40 @@ def index(request):
     return render(request, "wall/index.html")
 
 
-def success(request, first_name):
+def dashboard(request, first_name):
     context = {
         'first_name': first_name
     }
-    return render(request, "loginInfo/success.html", context)
+    # One for comments and one for messages
+    # context = {"messages": Message.objects.all()}
+    # context = {"authors": Comments.objects.all()}
+    return render(request, "wall/dashboard.html", context)
 
 
-def registration(request):
-    result = User.manager.makeUser(request.POST)
+def login(req):
     
-    if result[0]:                       # result will be either (True, user) or (False, errors)
-        return redirect('/success/{}'.format(result[1].first_name))
-    for message in result[1].itervalues():
-        messages.error(request, message)
+    result = User.manager.login(req.POST)
+    
+    if result[0]:
+        req.session['id'] = result[1].id
+        # print req.session['id']
+        return redirect('/dashboard')
+    
+    for message in result[1]:
+        messages.error(req,message[1])
     
     return redirect('/')
 
-
-def login(request):
-    result = User.manager.userLogin(request.POST)
-    if result[0]:                           # result will be either (True, user) or (False, errors)
-        return redirect('/success/{}'.format(result[1].first_name))
-    for message in result[1].itervalues():
-        messages.error(request, message)
+def register(req):
+    
+    result = User.manager.createUser(req.POST)
+    
+    if result[0]:
+        for key, message in result[1].iteritems():
+            messages.error(req, message)
+        return redirect('/')
+    
+    for key, message in result[1].iteritems():
+        messages.error(req, message)
+    
     return redirect('/')

@@ -14,28 +14,28 @@
       <a href="/log_off">Log off</a>
     </div>
     
-    <form id="message_submit" action="/message" method="post">
+    <form action="/message" method="post">
       <p>Post a message</p>
-      <textarea id="message" form="message_submit" name="message" rows="8" cols="80" placeholder="Whatcha thinkin' about?"></textarea>
-      <input class="message_submit" type="submit" value="Submit">
+      <textarea id="message" name="message" rows="8" cols="80" placeholder="Whatcha thinkin' about?"></textarea>
+      <input type="submit" value="Submit">
     </form>
     
     <hr>
     
     <div id="messages">
     
-        {% for message in query %}
+        {% for message in messages %}
     
     <h3>{{ message['user'] }} - {{ message['message_time']}}</h3>
     
       <p class="message">{{ message['message']}}</p>
     
       <ul>
-        {% for entry in query2 %}
-        {% if entry['message_id'] == message['message_id'] %}
+        {% for comment in comments %}
+        {% if comment['message_id'] == message['message_id'] %}
         <li>
-          <p>{{ entry['user'] }} - {{ entry['comment_time'] }}</p>
-          <p>{{ entry['comment'] }}</p>
+          <p>{{ comment['user'] }} - {{ comment['comment_time'] }}</p>
+          <p>{{ comment['comment'] }}</p>
         </li>
         {% endif %}
         {% endfor %}

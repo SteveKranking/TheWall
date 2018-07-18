@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from models import User
+from .models import *
 # Create your views here.
 
 
@@ -11,7 +11,8 @@ def index(request):
 def dashboard(request, first_name):
     context = {
       "messages": Message.objects.all(),
-      "authors": Comment.objects.all()
+      "authors": Comment.objects.all(),
+      'user': user
     }
     # One for comments and one for messages
     # context = {"messages": Message.objects.all()}
@@ -47,3 +48,32 @@ def register(req):
         messages.error(req, message)
     
     return redirect('/')
+
+def message(req):
+    
+    result = Message.manager.createMessage(req.POST)
+    
+    if result[0]:
+        for key, message in result[1].iteritems():
+            messages.error(req, message)
+        return redirect('/dashboard')
+    
+    for key, message in result[1].iteritems():
+        messages.error(req, message)
+    
+    return redirect('/')
+
+def comment(req):
+    
+    result = Comment.manager.createComment(req.POST)
+    
+    if result[0]:
+        for key, message in result[1].iteritems():
+            messages.error(req, message)
+        return redirect('/dashboard')
+    
+    for key, message in result[1].iteritems():
+        messages.error(req, message)
+    
+    return redirect('/')
+

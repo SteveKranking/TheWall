@@ -4,7 +4,7 @@ import re
 import bcrypt
 
 
-def uni_to_str(myDict):
+def uni_str_dict(myDict):
     data = {}
     for key, val in myDict.iteritems():
         if key != 'csrfmiddlewaretoken':
@@ -51,7 +51,7 @@ class UserManager(models.Manager):
         # if flag:
         #     return (False, collections.OrderedDict(errors))
 
-        new_user = self.create(email = data['email'], birthday= data['birthday'], password = data['password'])
+        new_user = self.create(email = data['email'], password = data['password'], username = data['username'])
 
         return(True, collections.OrderedDict(errors), new_user)
     
@@ -73,7 +73,7 @@ class UserManager(models.Manager):
             return (False, errors)
         return(True, called_user)
 
-class MessageManager():
+class MessageManager(models.Manager):
     def createMessage(self, form):
 
         flag = False
@@ -91,7 +91,7 @@ class MessageManager():
         new_message = self.create(content = data['content'], poster= data[''])
         return(True, new_message)
 
-class CommentManager():
+class CommentManager(models.Manager):
     def createComment(self, form):
 
         flag = False
@@ -114,20 +114,21 @@ class CommentManager():
 class User(models.Model):
     email = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
+    username = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     manager = UserManager()
 
 class Message(models.Model):
     content = models.CharField(max_length=255)
-    poster = models.ForeignKey(User, related_name="messages")
+    poster = models.ForeignKey(User, related_name="messages", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     manager = MessageManager()
 
 class Comment(models.Model):
     content = models.CharField(max_length=255)
-    poster = models.ForeignKey(User, related_name="comments")
+    poster = models.ForeignKey(User, related_name="comments", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     manager = CommentManager()

@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponse
 from django.contrib import messages
 from .models import *
 # Create your views here.
@@ -10,10 +10,12 @@ def index(request):
 
 def dashboard(request, first_name):
     context = {
-      "messages": Message.objects.all(),
-      "authors": Comment.objects.all(),
-      'user': User.manager.get(id=req.session['id'])
+      "messages": Message.objects.order_by("created_at"),
+      "authors": Comment.objects.order_by("created_at")
     }
+    
+    # 'user': User.manager.get(id=req.session['id'])
+
     # One for comments and one for messages
     # context = {"messages": Message.objects.all()}
     # context = {"authors": Comment.objects.all()}

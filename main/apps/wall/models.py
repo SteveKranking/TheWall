@@ -110,6 +110,8 @@ class User(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     manager = UserManager()
+    def __repr__(self): 
+        return "My name is {} and I am a user.".format(self.username)
 
 class Message(models.Model):
     content = models.CharField(max_length=255)
@@ -117,6 +119,8 @@ class Message(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     manager = MessageManager()
+    def __repr__(self): 
+        return "I am a message created by {}.".format(self.poster)
 
 class Comment(models.Model):
     content = models.CharField(max_length=255)
@@ -124,3 +128,5 @@ class Comment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     manager = CommentManager()
+    def __repr__(self): 
+        return "I am a comment created by {}.".format(self.poster)

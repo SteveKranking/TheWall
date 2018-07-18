@@ -11,11 +11,11 @@ def index(request):
 def dashboard(request, first_name):
     context = {
       "messages": Message.objects.order_by("created_at"),
-      "authors": Comment.objects.order_by("created_at")
+      "authors": Comment.objects.order_by("created_at"),
+      'user': User.manager.get(id=req.session['id'])
+
     }
     
-    # 'user': User.manager.get(id=req.session['id'])
-
     # One for comments and one for messages
     # context = {"messages": Message.objects.all()}
     # context = {"authors": Comment.objects.all()}
@@ -27,27 +27,32 @@ def login(req):
     
     result = User.manager.login(req.POST)
     
-    if result[0]:
-        req.session['id'] = result[1].id
-        # print req.session['id']
-        return redirect('/dashboard')
+    # if result[0]:
+    #     req.session['id'] = result[1].id
+    #     # print req.session['id']
+    #     return redirect('/dashboard')
     
-    for message in result[1]:
-        messages.error(req,message[1])
+    # for message in result[1]:
+    #     messages.error(req,message[1])
     
     return redirect('/')
 
-def register(req):
+def register(request):
+
+    email = request.POST['email']
+    password = request.POST['password']
+    username = request.POST['username']
+
     
-    result = User.manager.createUser(req.POST)
+    result = User.manager.createUser(request.POST)
     
-    if result[0]:
-        for key, message in result[1].iteritems():
-            messages.error(req, message)
-        return redirect('/dashboard')
+    # if result[0]:
+    #     for key, message in result[1].iteritems():
+    #         messages.error(req, message)
+    #     return redirect('/')
     
-    for key, message in result[1].iteritems():
-        messages.error(req, message)
+    # for key, message in result[1].iteritems():
+    #     messages.error(req, message)
     
     return redirect('/')
 

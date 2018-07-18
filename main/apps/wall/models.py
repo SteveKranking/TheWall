@@ -7,7 +7,6 @@ class UserManager(models.Manager):
     def createUser(self, form):
         flag = False
         errors = []
-        data = uni_str_dict(form)
         # now= str(datetime.datetime.now())
         # if User.manager.filter(email = data['email']):
         #     flag = True
@@ -42,14 +41,13 @@ class UserManager(models.Manager):
         # if flag:
         #     return (False, collections.OrderedDict(errors))
 
-        new_user = self.create(email = data['email'], password = data['password'], username = data['username'])
+        new_user = self.create(email = 'email', password = 'password', username ='username')
 
-        return(True, collections.OrderedDict(errors), new_user)
+        return(True, new_user)
     
     def login(self, form):
         flag = False
         errors = []
-        data = uni_str_dict(form)
         try:
             called_user = User.manager.get(email=data['email'])
         except Exception:
@@ -69,7 +67,6 @@ class MessageManager(models.Manager):
 
         flag = False
         errors = []
-        data = uni_str_dict(form)
 
         if len(data['content']) < 1:
             flag = True
@@ -80,7 +77,7 @@ class MessageManager(models.Manager):
             
         # request.session id for poster?
         # User.manager.get(id=req.session['id'])??
-        new_message = self.create(content = data['content'], poster= data[''])
+        new_message = self.create(content = request.POST['content'], poster= data[''])
         return(True, new_message)
 
 class CommentManager(models.Manager):
@@ -88,8 +85,6 @@ class CommentManager(models.Manager):
 
         flag = False
         errors = []
-        data = uni_str_dict(form)
-
         if len(data['content']) < 1:
             flag = True
             errors.append(('first_name_length', "Your first name must be at least three characters long"))
@@ -98,7 +93,7 @@ class CommentManager(models.Manager):
             return (False, errors)
             
         # request.session id for poster?
-        new_comment = self.create(content = data['content'], poster= data[''])
+        new_comment = self.create(content = request.POST['content'], poster= data[''])
         return(True, new_comment)
 
 

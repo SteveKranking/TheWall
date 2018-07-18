@@ -12,7 +12,7 @@ def dashboard(request, first_name):
     context = {
       "messages": Message.objects.all(),
       "authors": Comment.objects.all(),
-      'user': user
+      'user': User.manager.get(id=req.session['id'])
     }
     # One for comments and one for messages
     # context = {"messages": Message.objects.all()}

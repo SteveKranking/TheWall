@@ -3,15 +3,6 @@ from django.db import models
 import re
 import bcrypt
 
-
-def uni_str_dict(myDict):
-    data = {}
-    for key, val in myDict.iteritems():
-        if key != 'csrfmiddlewaretoken':
-            data[key] = str(val)
-    return data
-
-
 class UserManager(models.Manager):
     def createUser(self, form):
         flag = False
@@ -88,6 +79,7 @@ class MessageManager(models.Manager):
             return (False, errors)
             
         # request.session id for poster?
+        # User.manager.get(id=req.session['id'])??
         new_message = self.create(content = data['content'], poster= data[''])
         return(True, new_message)
 

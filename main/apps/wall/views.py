@@ -25,48 +25,37 @@ def dashboard(request, first_name):
 
 def login(request):
     
-  # context = {
-  #   errors: 'errors'
-  # }
-  
-  errors = []
+ check = User.objects.login(
+      request.POST["username"],
+      request.POST["password"]
+  )
 
-  email = request.POST['email']
-  password = request.POST['password']
-
-  try:
-    user = User.objects.get(email=email)
-  except User.DoesNotExist:
-    user = None
-    errors.append("Username not found")
-  if(type(user) == None):
-    if(user.password != password):
-      errors.append("Password Incorrect")
-    return redirect('/')
-  
-  else:    
-    request.session['user'] = User.objects.get(email = email)
-    return redirect('/dashboard')
+  if not check["valid"]:
+      for error in check["errors"]:
+          messages.add_message(request, messages.ERROR, error)
+      return redirect("/")
+  else:
+      request.session["user_id"] = check["username"].id
+      messages.add_message(request, messages.SUCCESS, "Welcome, {}".format(check["username"].name))
+      return redirect("/dashboard")
 
 def register(request):
 
-  # errors = []
+  check = User.objects.register(
+         request.POST["username"],
+        request.POST["email"],
+        request.POST["password"]
+    )
 
-  # context = {
-  #   errors: 'errors'
-  # }
-
-  email = request.POST['email']
-  password = request.POST['password']
-  username = request.POST['username']
-
-  new_user = User.objects.create(email = email, password = password, username = username)
-
-  print(new_user.username)
+  if not check["valid"]:
+      for error in check["errors"]:
+          messages.add_message(request, messages.ERROR, error)
+      return redirect("/")
+  else:
+      request.session["user_id"] = check["user"].id
+      messages.add_message(request, messages.SUCCESS, "Welcome, {}".format(request.POST["username"]))
+      return redirect("/")
   
-  
-  return redirect('/')
-
 def message(req):
 
 

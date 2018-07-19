@@ -24,14 +24,29 @@ def login(req):
     context = {
       errors: 'errors'
     }
+    
+    errors = []
 
-    result = User.manager.login(req.POST)
-       
-    return redirect('/')
+    email = request.POST['email']
+    password = reqiest.POST['password']
+
+    called_user = User.objects.get(email="email")
+
+    if(called_user == null):
+      errors.append("Username not found")
+    elif(called_user.password != password):
+      errors.append("Password incorrect")
+      return redirect('/')
+    
+    else:
+      
+      request.session['user'] = User.objects.get(email="email")
+
+      return redirect('/dashboard')
 
 def register(request):
 
-    contect = {
+    context = {
       errors: 'errors'
     }
 
@@ -44,11 +59,27 @@ def register(request):
     return redirect('/')
 
 def message(req):
-    
+
+    context = {
+      errors: 'errors'
+    }    
+    content = request.POST['content']
+    poster = request.session['user']
+
+    new_message = self.create(content = 'content', poster = 'poster')
        
     return redirect('/')
 
 def comment(req):
-    
+
+    context = {
+      errors: 'errors'
+    }
+
+    content = request.POST['content']
+    poster = request.session['user']
+
+    new_comment = self.create(content = 'content', poster = 'poster')
+
     return redirect('/')
 

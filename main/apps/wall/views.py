@@ -5,82 +5,98 @@ from .models import *
 
 
 def index(request):
-    return render(request, "wall/index.html")
+  return render(request, "wall/index.html")
 
 
 def dashboard(request, first_name):
-    context = {
-      "messages": Message.objects.order_by("created_at"),
-      "authors": Comment.objects.order_by("created_at"),
-      'user': request.session['user']
-    }
+  
+  context = {
+    'user': request.session['user']
+  }
+
+  # if(len(Message.objects.all()) > 0):
+  #   context.["messages": Message.objects.order_by("created_at")]
+  # if(len(Comment.objects.all()) > 0):
+  #   context.["comments": Comment.objects.order_by("created_at")]
+
+  
+  return render(request, "wall/dashboard.html", context)
+
+
+def login(request):
     
-    return render(request, "wall/dashboard.html", context)
+  # context = {
+  #   errors: 'errors'
+  # }
+  
+  errors = []
 
+  email = request.POST['email']
+  password = request.POST['password']
 
-def login(req):
-    
-    context = {
-      errors: 'errors'
-    }
-    
-    errors = []
-
-    email = request.POST['email']
-    password = reqiest.POST['password']
-
-    called_user = User.objects.get(email="email")
-
-    if(called_user == null):
-      errors.append("Username not found")
-    elif(called_user.password != password):
-      errors.append("Password incorrect")
-      return redirect('/')
-    
-    else:
-      
-      request.session['user'] = User.objects.get(email="email")
-
-      return redirect('/dashboard')
+  try:
+    user = User.objects.get(email=email)
+  except User.DoesNotExist:
+    user = None
+    errors.append("Username not found")
+  if(type(user) == None):
+    if(user.password != password):
+      errors.append("Password Incorrect")
+    return redirect('/')
+  
+  else:    
+    request.session['user'] = User.objects.get(email = email)
+    return redirect('/dashboard')
 
 def register(request):
 
-    context = {
-      errors: 'errors'
-    }
+  # errors = []
 
-    email = request.POST['email']
-    password = request.POST['password']
-    username = request.POST['username']
+  # context = {
+  #   errors: 'errors'
+  # }
 
-    new_user = self.create(email = 'email', password = 'password', username ='username')
-   
-    return redirect('/')
+  email = request.POST['email']
+  password = request.POST['password']
+  username = request.POST['username']
+
+  new_user = User.objects.create(email = email, password = password, username = username)
+
+  print(new_user.username)
+  
+  
+  return redirect('/')
 
 def message(req):
 
-    context = {
-      errors: 'errors'
-    }    
-    content = request.POST['content']
-    poster = request.session['user']
 
-    new_message = self.create(content = 'content', poster = 'poster')
-       
-    return redirect('/')
+  # errors = []
+
+  # context = {
+  #   errors: 'errors'
+  # }  
+
+  content = request.POST['content']
+  poster = request.session['user']
+
+  new_message = Message.objects.create(content = 'content', poster = 'poster')
+      
+  return redirect('/')
 
 def comment(req):
 
-    context = {
-      errors: 'errors'
-    }
+  # errors = []
+  
+  # context = {
+  #   errors: 'errors'
+  # }
 
-    content = request.POST['content']
-    poster = request.session['user']
+  content = request.POST['content']
+  poster = request.session['user']
 
-    new_comment = self.create(content = 'content', poster = 'poster')
+  new_comment = Comment.objects.create(content = 'content', poster = 'poster')
 
-    return redirect('/')
+  return redirect('/')
 
 def logout(request):
   request.session.flush()

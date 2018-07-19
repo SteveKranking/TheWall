@@ -82,24 +82,20 @@ class User(models.Model):
     username = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    manager = UserManager()
-    def __repr__(self): 
-        return "My name is {} and I am a user.".format(self.username)
+    objects = UserManager()
+ 
 
 class Message(models.Model):
     content = models.CharField(max_length=255)
     poster = models.ForeignKey(User, related_name="messages", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    manager = MessageManager()
-    def __repr__(self): 
-        return "I am a message created by {}.".format(self.poster)
+    objects = MessageManager()
+
 
 class Comment(models.Model):
     content = models.CharField(max_length=255)
     poster = models.ForeignKey(User, related_name="comments", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    manager = CommentManager()
-    def __repr__(self): 
-        return "I am a comment created by {}.".format(self.poster)
+    objects = CommentManager()

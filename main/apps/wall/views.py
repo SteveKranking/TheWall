@@ -12,8 +12,7 @@ def dashboard(request, first_name):
     context = {
       "messages": Message.objects.order_by("created_at"),
       "authors": Comment.objects.order_by("created_at"),
-      'user': User.manager.get(id=req.session['id'])
-
+      'user': request.session['user']
     }
     
     return render(request, "wall/dashboard.html", context)
@@ -83,3 +82,6 @@ def comment(req):
 
     return redirect('/')
 
+def logout(request):
+  request.session.flush()
+  return redirect('/')

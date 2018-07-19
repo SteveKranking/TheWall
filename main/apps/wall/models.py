@@ -17,7 +17,7 @@ class UserManager(models.Manager):
         elif not (username):
             errors.append("Invalid username")
         else:
-            usersMatchingEmail = User.objects.filter(email=email)
+            usersMatchingEmail = User.objects.get(email=email)
             if len(usersMatchingUsername) == 0:
                 errors.append("Unknown username")
         if len(password) < 1:
@@ -55,7 +55,7 @@ class UserManager(models.Manager):
         elif not EMAIL_REGEX.match(email):
             errors.append("Invalid email")
         else:
-            usersMatchingEmail = User.objects.filter(email=email)
+            usersMatchingEmail = User.objects.get(email=email)
             if len(usersMatchingEmail) > 0:
                 errors.append("Email already in use")
 

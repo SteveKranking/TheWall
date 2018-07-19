@@ -26,23 +26,23 @@ def dashboard(request, first_name):
 def login(request):
     
  check = User.objects.login(
-      request.POST["username"],
-      request.POST["password"]
+    request.POST["username"],
+    request.POST["password"]
   )
 
   if not check["valid"]:
-      for error in check["errors"]:
-          messages.add_message(request, messages.ERROR, error)
-      return redirect("/")
+    for error in check["errors"]:
+        messages.add_message(request, messages.ERROR, error)
+    return redirect("/")
   else:
-      request.session["user_id"] = check["username"].id
-      messages.add_message(request, messages.SUCCESS, "Welcome, {}".format(check["username"].name))
-      return redirect("/dashboard")
+    request.session["user_id"] = check["username"].id
+    messages.add_message(request, messages.SUCCESS, "Welcome, {}".format(check["username"].name))
+    return redirect("/dashboard")
 
 def register(request):
 
   check = User.objects.register(
-         request.POST["username"],
+        request.POST["username"],
         request.POST["email"],
         request.POST["password"]
     )
@@ -58,13 +58,6 @@ def register(request):
   
 def message(req):
 
-
-  # errors = []
-
-  # context = {
-  #   errors: 'errors'
-  # }  
-
   content = request.POST['content']
   poster = request.session['user']
 
@@ -73,12 +66,6 @@ def message(req):
   return redirect('/')
 
 def comment(req):
-
-  # errors = []
-  
-  # context = {
-  #   errors: 'errors'
-  # }
 
   content = request.POST['content']
   poster = request.session['user']

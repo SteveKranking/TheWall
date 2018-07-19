@@ -7,39 +7,6 @@ class UserManager(models.Manager):
     def createUser(self, form):
         flag = False
         errors = []
-        # now= str(datetime.datetime.now())
-        # if User.manager.filter(email = data['email']):
-        #     flag = True
-        #     errors.append(("used_email", "Email already registered."))
-        #     return (False, collections.OrderedDict(errors))
-        # if len(data['first_name'])<2:
-        #     flag = True
-        #     errors.append(('first_name_length', "Your first name must be at least three characters long"))
-        # if len(data['last_name'])<2:
-        #     flag = True
-        #     errors.append(('last_name_length', "Your last name must be at least three characters long")) 
-        
-        # for char in range(len(data['first_name'])):
-        #     if NAME_REGEX.match(data['first_name'][char]):
-        #         errors.append(('first_name_number', "No non letters are allowed in first name"))
-        #         flag = True
-        #         break    
-        # for char in range(len(data['last_name'])):
-        #     if NAME_REGEX.match(data['last_name'][char]):
-        #         errors.append(('last_name_number', "No non letters are allowed in last name"))
-        #         flag = True
-        #         break    
-        # if not EMAIL_REGEX.match(data['email']):
-        #     errors.append(('email', "Email Invalid."))
-        #     flag = True
-        # if not data['password']== data['confirm_password']:
-        #     errors.append(('password', "Passwords do not match"))
-        #     flag= True       
-        # # if now > birthday:
-        # #     errors.append(('date', "Birthday must be valid"))
-        # #     flag= True
-        # if flag:
-        #     return (False, collections.OrderedDict(errors))
 
         new_user = self.create(email = 'email', password = 'password', username ='username')
 
@@ -48,19 +15,30 @@ class UserManager(models.Manager):
     def login(self, form):
         flag = False
         errors = []
-        try:
-            called_user = User.manager.get(email=data['email'])
-        except Exception:
-            flag=True  
-            errors.append(("Taken_User", "Username is incorrect/already taken"))
-            return (False, errors)
-        if not bcrypt.checkpw(data['password'].encode(), called_user.password.encode()):
-            flag= True
-            errors.append(("password", "Password Incorrect"))
 
+        called_user = User.manager.get(email=request.POST['email'])
+
+        if called_user == null:
+            errors.append("Username does not exist")
+        if called_user.password != request.POST('password'):
+            errors.append("Password incorrect")
         if flag:
             return (False, errors)
-        return(True, called_user)
+        
+        return (True, called_user)
+
+        # try:
+        #     called_user = User.manager.get(email=data['email'])
+        # except Exception:
+        #     flag=True  
+        #     errors.append(("Taken_User", "Username is incorrect/already taken"))
+        #     return (False, errors)
+        # if not bcrypt.checkpw(data['password'].encode(), called_user.password.encode()):
+        #     flag= True
+        #     errors.append(("password", "Password Incorrect"))
+
+        # if flag:
+        #     return (False, errors)
 
 class MessageManager(models.Manager):
     def createMessage(self, form):

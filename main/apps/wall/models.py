@@ -3,7 +3,7 @@ from django.db import models
 import re
 import bcrypt
 
-EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9.+_-]+\.[a-zA-Z]+$')
+# EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9.+_-]+\.[a-zA-Z]+$')
 
 
 class UserManager(models.Manager):
@@ -11,10 +11,10 @@ class UserManager(models.Manager):
     def login(self, email, password):
 
         errors = []
+        print(email)
         
-        usersMatchingEmail = User.objects.get(email=email)
-        if len(usersMatchingUsername) == 0:
-            errors.append("Unknown username")
+        userMatchingEmail = User.objects.filter(email=email)
+
         if len(password) < 1:
             errors.append("Password is required")
         elif len(password) < 8:
@@ -27,8 +27,9 @@ class UserManager(models.Manager):
         }
 
         if len(errors) == 0:
-            if password == usersMatchingUsername[0].password:
-                response["username"] = usersMatchingUsername[0]
+            print(userMatchingEmail)
+            if password == userMatchingEmail[0].password:
+                response["email"] = userMatchingEmail
             else:
                 errors.append("Incorrect password")
 
@@ -47,10 +48,8 @@ class UserManager(models.Manager):
             errors.append("Username must be 3 characters or more")
         if len(email) < 1:
             errors.append("Email is required")
-        elif not EMAIL_REGEX.match(email):
-            errors.append("Invalid email")
         else:
-            usersMatchingEmail = User.objects.get(email=email)
+            usersMatchingEmail = User.objects.filter(email=email)
             if len(usersMatchingEmail) > 0:
                 errors.append("Email already in use")
 

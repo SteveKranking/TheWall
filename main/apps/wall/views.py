@@ -8,10 +8,10 @@ def index(request):
   return render(request, "wall/index.html")
 
 
-def dashboard(request, first_name):
+def dashboard(request):
   
   context = {
-    'user': request.session['user'],
+    'user': request.session['user_id'],
     "messages": Message.objects.order_by("created_at"),
     "comments": Comment.objects.order_by("created_at")
   }
@@ -26,13 +26,15 @@ def login(request):
     request.POST["password"]
   )
 
+  email = request.POST['email']
+
   if not check["valid"]:
     for error in check["errors"]:
       messages.add_message(request, messages.ERROR, error)
     return redirect("/")
   else:
-    request.session["user_id"] = check["email"].id
-    messages.add_message(request, messages.SUCCESS, "Welcome, {}".format(check["username"].name))
+    request.session["user_id"] = User.objects.filter(email=email)[0].id
+    # messages.add_message(request, messages.SUCCESS, "Welcome, {}".format(check["username"]))
     return redirect("/dashboard")
 
 def register(request):

@@ -12,14 +12,9 @@ class UserManager(models.Manager):
 
         errors = []
         
-        if len(username) < 1:
-            errors.append("username is required")
-        elif not (username):
-            errors.append("Invalid username")
-        else:
-            usersMatchingEmail = User.objects.get(email=email)
-            if len(usersMatchingUsername) == 0:
-                errors.append("Unknown username")
+        usersMatchingEmail = User.objects.get(email=email)
+        if len(usersMatchingUsername) == 0:
+            errors.append("Unknown username")
         if len(password) < 1:
             errors.append("Password is required")
         elif len(password) < 8:
@@ -83,38 +78,58 @@ class UserManager(models.Manager):
 
 
 class MessageManager(models.Manager):
-    def createMessage(self, form):
+    def createMessage(self, content, poster):
 
-        flag = False
+        valid = False
         errors = []
 
-        if len(data['content']) < 1:
-            flag = True
-            errors.append(('first_name_length', "Your first name must be at least three characters long"))
+        if len(content) < 1:
+            errors.append("You can't just post a blank post silly")
+        if not poster:
+            errors.append("No Ghostwriting here, buddy. Sign in.")
+        
+        if len(errors) > 0:
+            response = {
+                "errors": errors,
+                "valid": False,
+                "message": None 
+            }
 
-        if flag:
-            return (False, errors)
-            
-        # request.session id for poster?
-        # User.manager.get(id=req.session['id'])??
-        new_message = self.create(content = request.POST['content'], poster= data[''])
-        return(True, new_message)
+        else: 
+            response["message"] = Message.objects.create(
+                content = content,
+                poster = poster
+            )
+            response["valid"] = True
+
+        return response
 
 class CommentManager(models.Manager):
     def createComment(self, form):
 
-        flag = False
+        valid = False
         errors = []
-        if len(data['content']) < 1:
-            flag = True
-            errors.append(('first_name_length', "Your first name must be at least three characters long"))
 
-        if flag:
-            return (False, errors)
-            
-        # request.session id for poster?
-        new_comment = self.create(content = request.POST['content'], poster= data[''])
-        return(True, new_comment)
+        if len(content) < 1:
+            errors.append("You can't just post a blank post silly")
+        if not poster:
+            errors.append("No Ghostwriting here, buddy. Sign in.")
+        
+        if len(errors) > 0:
+            response = {
+                "errors": errors,
+                "valid": False,
+                "comment": None 
+            }
+
+        else: 
+            response["comment"] = Comment.objects.create(
+                content = content,
+                poster = poster
+            )
+            response["valid"] = True
+     
+        return response
 
 
 

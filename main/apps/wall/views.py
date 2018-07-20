@@ -11,31 +11,27 @@ def index(request):
 def dashboard(request, first_name):
   
   context = {
-    'user': request.session['user']
+    'user': request.session['user'],
+    "messages": Message.objects.order_by("created_at"),
+    "comments": Comment.objects.order_by("created_at")
   }
-
-  # if(len(Message.objects.all()) > 0):
-  #   context.["messages": Message.objects.order_by("created_at")]
-  # if(len(Comment.objects.all()) > 0):
-  #   context.["comments": Comment.objects.order_by("created_at")]
-
   
   return render(request, "wall/dashboard.html", context)
 
 
 def login(request):
     
- check = User.objects.login(
-    request.POST["username"],
+  check = User.objects.login(
+    request.POST["email"],
     request.POST["password"]
   )
 
   if not check["valid"]:
     for error in check["errors"]:
-        messages.add_message(request, messages.ERROR, error)
+      messages.add_message(request, messages.ERROR, error)
     return redirect("/")
   else:
-    request.session["user_id"] = check["username"].id
+    request.session["user_id"] = check["email"].id
     messages.add_message(request, messages.SUCCESS, "Welcome, {}".format(check["username"].name))
     return redirect("/dashboard")
 
@@ -48,31 +44,53 @@ def register(request):
     )
 
   if not check["valid"]:
-      for error in check["errors"]:
-          messages.add_message(request, messages.ERROR, error)
-      return redirect("/")
+    for error in check["errors"]:
+      messages.add_message(request, messages.ERROR, error)
+      # context = {
+      #   errors: 'errors'
+      # }
+    return redirect("/")
   else:
-      request.session["user_id"] = check["user"].id
-      messages.add_message(request, messages.SUCCESS, "Welcome, {}".format(request.POST["username"]))
-      return redirect("/")
+    request.session["user_id"] = check["user"].id
+    messages.add_message(request, messages.SUCCESS, "Welcome, {}".format(request.POST["username"]))
+    return redirect("/")
   
-def message(req):
+def message(request):
 
-  content = request.POST['content']
-  poster = request.session['user']
+  check = Message.objects.createMessage(
+      request.POST['content'],
+      request.session['user']
+  )
 
-  new_message = Message.objects.create(content = 'content', poster = 'poster')
+  if not check["valid"]:
+    for error in check["errors"]:
+      messages.add_message(request, messages.ERROR, error)
+      # context = {
+      #   errors: 'errors'
+      # }
+    return redirect("/dashboard")
+  else:
+    request.session["user_id"] = check["user"].id
+    messages.add_message(request, messages.SUCCESS, "Welcome, {}".format(request.POST["username"]))
+    return redirect("/dashboard")
       
-  return redirect('/')
+def comment(request):
 
-def comment(req):
+  check = Comment.objects.createComment(
+      request.POST['content'],
+      request.session['user']
+  )
 
-  content = request.POST['content']
-  poster = request.session['user']
-
-  new_comment = Comment.objects.create(content = 'content', poster = 'poster')
-
-  return redirect('/')
+  if not check["valid"]:
+    for error in check["errors"]:
+      messages.add_message(request, messages.ERROR, error)
+      # context = {
+      #   errors: 'errors'
+      # }
+    return redirect("/dashboard")
+  else:
+    messages.add_message(request, messages.SUCCESS, "Welcome, {}".format(request.POST["username"]))
+    return redirect("/dashboard")
 
 def logout(request):
   request.session.flush()

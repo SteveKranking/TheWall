@@ -9,8 +9,8 @@
     
     <div id="header">
       <span id="main_title">Coding Dojo Wall</span>
-      <span id="username">Welcome {{request.session.name}} </span>
-      <a href="/log_off">Log off</a>
+      <span id="username">Welcome {{request.session.username}} </span>
+      <a href="/logout">Log Out</a>
     </div>
     
     <form action="/message" method="post">
@@ -22,23 +22,23 @@
     <hr>
     
     <div id="messages">
-    
+
         {% for message in messages %}
     
-    <h3>{{ message['poster'] }} - {{ message['created_at']}}</h3>
-    
-      <p class="message">{{ message['content']}}</p>
-    
-      <ul>
-        {% for comment in comments %}
-        {% if comment['message_id'] == message['message_id'] %}
-        <li>
-          <p>{{ comment['poster'] }} - {{ comment['created_at'] }}</p>
-          <p>{{ comment['content'] }}</p>
-        </li>
-        {% endif %}
-        {% endfor %}
-      </ul>
+        <h3>{{ message.poster }} - {{ message.created_at}}</h3>
+      
+        <p class="message">{{ message.content}}</p>
+      
+        <ul>
+          {% for comment in comments %}
+          {% if comment.message_id == message.message_id %}
+          <li>
+            <p>{{ comment.poster }} - {{ comment.created_at }}</p>
+            <p>{{ comment.content }}</p>
+          </li>
+          {% endif %}
+          {% endfor %}  
+        </ul>
      
      
       <form action="/comment" method="post">
